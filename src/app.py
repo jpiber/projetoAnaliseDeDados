@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import os
 from pathlib import Path
 import json
 from urllib.request import urlopen
@@ -76,18 +77,36 @@ with st.sidebar:
     - [Disque Saúde 136](https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/disque-saude-136)
     """)
 
-# Carregando os dados
+# Função para carregar os dados com tratamento de erro
 @st.cache_data
 def carregar_dados():
-    data_dir = Path('data')
-    df_brasil = pd.read_csv(data_dir / 'covid_brasil.csv')
-    df_estados = pd.read_csv(data_dir / 'covid_estados.csv')
-    
-    df_brasil['date'] = pd.to_datetime(df_brasil['date'])
-    df_estados['date'] = pd.to_datetime(df_estados['date'])
-    return df_brasil, df_estados
+    try:
+        # Obtendo o caminho absoluto do diretório atual
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        # Subindo um nível para chegar na raiz do projeto
+        root_dir = os.path.dirname(current_dir)
+        # Caminho para o diretório de dados
+        data_dir = os.path.join(root_dir, 'data')
+        
+        # Carregando os dados
+        df_brasil = pd.read_csv(os.path.join(data_dir, 'covid_brasil.csv'))
+        df_estados = pd.read_csv(os.path.join(data_dir, 'covid_estados.csv'))
+        
+        # Convertendo datas
+        df_brasil['date'] = pd.to_datetime(df_brasil['date'])
+        df_estados['date'] = pd.to_datetime(df_estados['date'])
+        
+        return df_brasil, df_estados
+    except Exception as e:
+        st.error(f"Erro ao carregar os dados: {str(e)}")
+        return None, None
 
+# Carregando os dados
 df_brasil, df_estados = carregar_dados()
+
+if df_brasil is None or df_estados is None:
+    st.error("Não foi possível carregar os dados. Por favor, verifique se os arquivos de dados existem.")
+    st.stop()
 
 # Seção 1: Visão Geral
 st.markdown("<h2 class='section-header'>Visão Geral da Pandemia</h2>", unsafe_allow_html=True)
