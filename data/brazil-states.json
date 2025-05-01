@@ -1,0 +1,17 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {"name": "Acre", "sigla": "AC"},
+            "id": "AC",
+            "geometry": {"type": "MultiPolygon", "coordinates": []}
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Alagoas", "sigla": "AL"},
+            "id": "AL",
+            "geometry": {"type": "MultiPolygon", "coordinates": []}
+        }
+    ]
+} 
